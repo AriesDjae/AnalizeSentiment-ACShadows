@@ -1,0 +1,5 @@
+env/
+.ipynboook_checkpoints/
+__pycache__/
+Instagram-Hashtag-Scraper-main/
+.env
