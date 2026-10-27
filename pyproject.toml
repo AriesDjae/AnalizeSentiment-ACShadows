@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "acs-sentiment"
+version = "1.0.0"
+description = "Analisis sentimen Assassin's Creed Shadows (Steam, Reddit, YouTube) dengan PySpark dan PMI"
+requires-python = ">=3.9"
+dependencies = ["pyspark>=3.5,<4", "pandas>=1.5", "numpy>=1.24"]
+
+[project.scripts]
+acs-sentiment = "acs_sentiment.pipeline:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

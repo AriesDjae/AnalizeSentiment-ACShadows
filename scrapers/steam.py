@@ -2,15 +2,18 @@ import requests
 import csv
 import time
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
+from pathlib import Path
+
+OUTPUT_DIR = Path(__file__).resolve().parents[1] / "data" / "raw"
 
 
 def convert_timestamp(ts):
     """Convert UNIX timestamp → '27 March 2024' """
     try:
-        dt = datetime.utcfromtimestamp(ts)
+        dt = datetime.fromtimestamp(ts, tz=timezone.utc)
         return dt.strftime("%d %B %Y")  # ex: 27 March 2024
-    except:
+    except (TypeError, ValueError, OverflowError, OSError):
         return ""
 
 
@@ -18,6 +21,7 @@ def fetch_reviews_api(appid, max_per_page=100, language="english"):
     url = f"https://store.steampowered.com/appreviews/{appid}"
     cursor = "*"
     all_reviews = []
+    seen_ids = set()
     page = 1
 
     headers = {
@@ -66,7 +70,15 @@ def fetch_reviews_api(appid, max_per_page=100, language="english"):
             print("[INFO] No more reviews.")
             break
 
+        new_on_page = 0
         for r in reviews:
+            # Steam cursor kadang mengulang halaman -> dedup berdasarkan ID review
+            review_id = r.get("recommendationid")
+            if review_id in seen_ids:
+                continue
+            seen_ids.add(review_id)
+            new_on_page += 1
+
             unix_time = r.get("timestamp_created", 0)
 
             all_reviews.append({
@@ -77,9 +89,10 @@ def fetch_reviews_api(appid, max_per_page=100, language="english"):
                 "recommended": "Recommended" if r.get("voted_up") else "Not Recommended"
             })
 
-        cursor = data.get("cursor")
-        if not cursor:
+        next_cursor = data.get("cursor")
+        if not next_cursor or next_cursor == cursor or new_on_page == 0:
             break
+        cursor = next_cursor
 
         page += 1
         time.sleep(1)
@@ -88,7 +101,8 @@ def fetch_reviews_api(appid, max_per_page=100, language="english"):
 
 
 def save_csv(appid, rows):
-    filename = f"steam_reviews_{appid}.csv"
+    OUTPUT_DIR.mkdir(exist_ok=True)
+    filename = OUTPUT_DIR / "steam_reviews.csv"  # nama yang dibaca pipeline (acs_sentiment.config)
 
     with open(filename, "w", encoding="utf-8-sig", newline="") as f:
         writer = csv.DictWriter(
@@ -103,7 +117,7 @@ def save_csv(appid, rows):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python scrape_api.py <appid>")
+        print("Usage: python scrapers/steam.py <appid>")
         sys.exit(1)
 
     appid = sys.argv[1]

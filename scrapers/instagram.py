@@ -16,7 +16,7 @@ cl = Client()
 USERNAME = os.getenv("INSTAGRAM_USERNAME")
 PASSWORD = os.getenv("INSTAGRAM_PASSWORD")
 
-SESSION_FILE = "session.json"
+SESSION_FILE = "session.json"  # rahasia: sudah di .gitignore, jangan di-commit
 
 
 # =====================================================

@@ -10,9 +10,9 @@ OPTIMIZED FOR UNATTENDED RUNNING:
 - Safe to leave running
 
 Usage:
-    python reddit_scraper_no_api.py          # Full scrape (slow but complete)
-    python reddit_scraper_no_api.py --test   # Quick test
-    python reddit_scraper_no_api.py --fast   # Faster but may hit limits
+    python scrapers/reddit.py          # Full scrape (slow but complete)
+    python scrapers/reddit.py --test   # Quick test
+    python scrapers/reddit.py --fast   # Faster but may hit limits
 """
 
 import argparse
@@ -20,7 +20,7 @@ import csv
 import sys
 import time
 import random
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 try:
@@ -50,7 +50,7 @@ SEARCH_KEYWORDS = [
 
 REQUIRED_TERMS = ["shadows", "naoe", "yasuke"]
 MIN_TEXT_LENGTH = 100
-OUTPUT_FILE = "../data/reddit_posts.csv"
+OUTPUT_FILE = "../data/raw/reddit_posts.csv"  # relatif terhadap folder script
 
 # Timing settings
 DELAY_NORMAL = (15, 20)      # Normal delay range (seconds)
@@ -169,11 +169,11 @@ def parse_post(post_data, subreddit):
         return None
     
     created = data.get('created_utc', 0)
-    post_date = datetime.fromtimestamp(created) if created else datetime.now()
+    post_date = datetime.fromtimestamp(created, tz=timezone.utc) if created else None
     
     return {
         'user': data.get('author', '[deleted]'),
-        'date': post_date.strftime('%Y-%m-%d'),
+        'date': post_date.strftime('%Y-%m-%d') if post_date else '',
         'comment': f"[{title}] {text}".strip()[:5000],
         'score': data.get('score', 0),
         'type': 'post',
@@ -197,11 +197,11 @@ def parse_comment(comment_data, subreddit, post_title):
         return None
     
     created = data.get('created_utc', 0)
-    comment_date = datetime.fromtimestamp(created) if created else datetime.now()
+    comment_date = datetime.fromtimestamp(created, tz=timezone.utc) if created else None
     
     return {
         'user': data.get('author', '[deleted]'),
-        'date': comment_date.strftime('%Y-%m-%d'),
+        'date': comment_date.strftime('%Y-%m-%d') if comment_date else '',
         'comment': text[:5000],
         'score': data.get('score', 0),
         'type': 'comment',

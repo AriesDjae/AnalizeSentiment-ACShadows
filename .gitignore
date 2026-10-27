@@ -1,5 +1,28 @@
-env/
-.ipynboook_checkpoints/
-__pycache__/
-Instagram-Hashtag-Scraper-main/
+# Secrets & credentials
 .env
+session.json
+user_cache.json
+
+# Environments
+env/
+venv/
+.venv/
+
+# Python / Jupyter
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Spark
+spark-warehouse/
+metastore_db/
+derby.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Third-party code (not part of this project)
+Instagram-Hashtag-Scraper-main/

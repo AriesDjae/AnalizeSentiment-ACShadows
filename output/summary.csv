@@ -1,0 +1,4 @@
+source,platform,documents,dropped_non_english,positive,negative,neutral,positive_share,gold_positive_share,date_min,date_max
+steam,Steam,11925,63,7225,1367,3333,0.8409,0.7892,2025-03-20,2025-11-24
+reddit,Reddit,591,0,336,82,173,0.8038,,2024-12-11,2025-12-01
+youtube,YouTube,1146,1,290,135,721,0.6824,,,

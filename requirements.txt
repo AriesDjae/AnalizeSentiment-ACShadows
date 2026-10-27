@@ -1,3 +1,19 @@
-pyspark>=3.4.0
-pandas>=1.5.0
-plotly>=5.15.0
+# Analisis (pipeline & notebook). Butuh Java 8/11/17 dan JAVA_HOME terset.
+pyspark>=3.5,<4
+pandas>=1.5
+numpy>=1.24
+matplotlib>=3.7
+jupyter
+
+# Dashboard
+-r dashboard/requirements.txt
+
+# Scraping (opsional, hanya untuk mengambil data baru)
+requests>=2.31
+selenium>=4.15
+instagrapi>=2.0
+python-dotenv>=1.0
+tenacity>=8.2
+
+# Pengembangan
+pytest>=7
